@@ -1,0 +1,13 @@
+{
+  "email": "usuario@ejemplo.com",
+  "password": "",
+  "groups": [
+    "https://www.facebook.com/groups/ID_DEL_GRUPO"
+  ],
+  "message": "",
+  "facebook_description": "",
+  "link_to_promote": "",
+  "image_path": "",
+  "license_key": "",
+  "license_server_url": ""
+}

@@ -1,0 +1,73 @@
+### DIAGRAMA MODELO DE DATOS (Tablas y Relaciones)
+
+A continuación se presenta el modelo lógico de datos diseñado para el sistema "AutoMarketing". Dado que el sistema utiliza una arquitectura basada en configuración JSON y logs de eventos, este modelo representa la estructura conceptual de la información.
+
+#### 1. Representación Visual (Diagrama ER)
+Se ha generado una imagen detallada del modelo entidad-relación en el archivo:
+`modelo_datos_er.png`
+
+#### 2. Definición de Tablas (Entidades)
+
+**A. Tabla: USUARIO (Credenciales)**
+Almacena la información de acceso requerida para la autenticación en Facebook.
+*   `email` (PK - VARCHAR): Correo electrónico del usuario (Identificador único).
+*   `password` (VARCHAR): Contraseña de acceso (Encriptada o almacenada en config segura).
+
+**B. Tabla: CAMPAÑA (Datos del Post)**
+Contiene la información del contenido publicitario que se va a difundir.
+*   `id` (PK - INT): Identificador único de la campaña.
+*   `usuario_email` (FK - VARCHAR): Referencia al usuario que creó la campaña.
+*   `mensaje` (TEXT): Texto principal de la publicación.
+*   `link_promocion` (VARCHAR): URL del producto o servicio a promocionar.
+*   `imagen_path` (VARCHAR): Ruta local de la imagen adjunta (opcional).
+
+**C. Tabla: GRUPO_FACEBOOK**
+Catálogo de los grupos objetivo donde se realizará la difusión.
+*   `url` (PK - VARCHAR): Dirección web única del grupo de Facebook.
+*   `nombre` (VARCHAR): Nombre descriptivo del grupo (opcional, extraído dinámicamente).
+
+**D. Tabla: PUBLICACION (Bitácora/Log)**
+Registro histórico de las acciones realizadas por el bot (Relación N:M entre Campaña y Grupo).
+*   `id` (PK - INT): Identificador del evento.
+*   `campaña_id` (FK - INT): Qué campaña se publicó.
+*   `grupo_url` (FK - VARCHAR): En qué grupo se publicó.
+*   `fecha_hora` (DATETIME): Momento exacto de la publicación.
+*   `estado` (VARCHAR): Resultado de la acción ('Exitoso', 'Fallido', 'Pendiente').
+
+#### 3. Diagrama en Texto (Mermaid)
+
+```mermaid
+erDiagram
+    USUARIO ||--o{ CAMPAÑA : crea
+    USUARIO {
+        string email PK
+        string password
+    }
+    
+    CAMPAÑA ||--|{ PUBLICACION : genera
+    CAMPAÑA {
+        int id PK
+        string usuario_email FK
+        string mensaje
+        string link_promocion
+    }
+
+    GRUPO_FACEBOOK ||--o{ PUBLICACION : recibe
+    GRUPO_FACEBOOK {
+        string url PK
+        string nombre
+    }
+
+    PUBLICACION {
+        int id PK
+        int campana_id FK
+        string grupo_url FK
+        datetime fecha_hora
+        string estado
+    }
+```
+
+#### 4. Relaciones
+1.  **Un Usuario tiene Muchas Campañas (1:N):** Un perfil de marketing puede gestionar diferentes mensajes de venta.
+2.  **Una Campaña tiene Muchas Publicaciones (1:N):** El mismo mensaje se replica en múltiples grupos.
+3.  **Un Grupo tiene Muchas Publicaciones (1:N):** Un grupo puede recibir anuncios de diferentes campañas a lo largo del tiempo.

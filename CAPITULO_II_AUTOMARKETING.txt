@@ -1,0 +1,37 @@
+CAPITULO II: Planteamiento de la estadía Profesional
+
+Descripción de la problemática
+La problemática que identificamos en el área de marketing de DICOTECH se centró en la ineficiencia y el consumo excesivo de tiempo que conlleva la difusión manual de campañas publicitarias en redes sociales. Previamente a la creación del sistema "AutoMarketing", el equipo de marketing realizaba la publicación de contenidos en diversos grupos de Facebook de manera manual, uno por uno. Esta situación representaba una pérdida significativa de horas-hombre, fatiga operativa y riesgo de errores humanos (como publicaciones duplicadas o textos incorrectos), comprometiendo la capacidad de la empresa para mantener una presencia constante y cronometrada en los canales digitales, algo vital para responder a las exigencias del mercado actual que requiere inmediatez y alcance masivo.
+
+Objetivo
+• Desarrollar un sistema de software de automatización (Bot) que optimice la capacidad operativa del área de marketing de DICOTECH, durante el periodo de estadía.
+• Facilitar la difusión de campañas, gestión de publicaciones y el alcance en grupos de Facebook de manera automática y cómoda para los colaboradores.
+
+Los objetivos del proyecto consisten en desarrollar una herramienta tecnológica funcional para agilizar la promoción de productos y servicios, implementar una plataforma de control intuitiva (Dashboard Web) para gestionar las campañas, satisfacer la necesidad de mayor alcance con menor esfuerzo humano, mejorar la capacidad operativa de la empresa para gestionar múltiples grupos de difusión simultáneamente, y adoptar tecnologías de automatización (RPA) para modernizar los procesos internos de marketing.
+
+Justificación
+La justificación de este proyecto radica en la necesidad imperativa de modernizar y optimizar el flujo de trabajo del departamento de marketing mediante la creación de un sistema de automatización. Esta iniciativa busca proporcionar a los colaboradores una herramienta potente y eficiente para realizar "difusión masiva" en pilotos automáticos, cubriendo así una demanda de productividad en el mercado actual. Al implementar esta solución digital basada en Python, DICOTECH podrá redirigir el talento humano hacia tareas más creativas y estratégicas, dejando la ejecución repetitiva al software, compitiendo así efectivamente en un entorno digital donde la velocidad y la constancia son clave.
+
+Viabilidad
+Se cuenta con los recursos tecnológicos (equipos de cómputo, acceso a internet) y las herramientas de software libre (Python, Selenium, Flask) necesarios para realizar la estadía profesional efectiva. El proyecto es viable dado que no requiere inversión en licencias costosas y se cuenta con el respaldo de un equipo capacitado en el área, garantizando un trabajo de alta calidad y la responsabilidad que conlleva este período de formación.
+
+Resultados Esperados
+• Terminar el sistema "AutoMarketing" con una interfaz web funcional que permita configurar campañas, credenciales y grupos objetivo según las necesidades del área.
+• Lograr que el bot realice el ciclo completo de: inicio de sesión, navegación a grupos y publicación de contenido sin intervención humana.
+• Haber realizado pruebas de funcionalidad y manejo de errores (como captchas o cambios en el diseño de Facebook) para corroborar la estabilidad del sistema.
+
+Metodología para aplicar
+El proyecto está realizado con un enfoque de desarrollo ágil y modular. Esta es la metodología que se usó conforme a las actividades desarrolladas:
+1. Análisis de la estructura DOM de Facebook: Investigación de las clases y elementos HTML de la red social para permitir la interacción automática (inputs, botones, formularios).
+2. Desarrollo del Core de Automatización (Backend): Programación de los scripts en Python utilizando Selenium para replicar el comportamiento humano (tecleo, clics, esperas).
+3. Desarrollo de la Interfaz de Usuario (Frontend): Diseño e implementación de un Dashboard web con HTML/CSS y Flask para que el personal de marketing pueda operar el sistema sin tocar código.
+4. Integración y Pruebas en Tiempo Real: Conexión del sistema con WebSockets para visualizar el progreso del bot en tiempo real y corrección de errores de navegación.
+
+Factibilidad Técnica:
+El sistema "AutoMarketing" está siendo desarrollado mediante tecnologías y herramientas de programación modernas y de código abierto, por lo cual, se cuenta con total disponibilidad de los recursos necesarios. Las herramientas que utilicé para desarrollar el sistema fueron las siguientes:
+• Lenguaje de Programación: Python 3.x (por su potencia en automatización y scripts).
+• Automatización Web: Selenium WebDriver (para el control del navegador).
+• Framework Web: Flask (para crear el servidor y la interfaz de control).
+• Frontend: HTML5, CSS3 (con diseño Dark Mode profesional) y JavaScript.
+• Comunicación en Tiempo Real: Flask-SocketIO (para logs en vivo).
+• Editor de Código: Visual Studio Code.

@@ -1,0 +1,194 @@
+DOCUMENTACIÓN TÉCNICA DEL PROYECTO
+SISTEMA DE AUTOMATIZACIÓN DE DIFUSIÓN DE MARKETING (AutoMarketing)
+EMPRESA: DICOTECH
+ÁREA SOLICITANTE: DEPARTAMENTO DE MARKETING
+
+1. INTRODUCCIÓN
+--------------------------------------------------------------------------------
+El presente documento describe los requerimientos funcionales y la arquitectura 
+del sistema "AutoMarketing", desarrollado para optimizar los procesos de difusión 
+de campañas publicitarias y productos de DICOTECH en la plataforma Facebook.
+
+Este sistema permite a los colaboradores de marketing automatizar la publicación 
+de contenido en múltiples grupos de interés de manera secuencial y controlada, 
+simulando el comportamiento humano para maximizar el alcance y minimizar riesgos 
+de bloqueo.
+
+2. REQUERIMIENTOS FUNCIONALES
+--------------------------------------------------------------------------------
+A continuación se detallan las funciones que el sistema debe cumplir para satisfacer 
+las necesidades operativas del área de Marketing de DICOTECH:
+
+2.1. Gestión de Sesión y Seguridad
+    - RF-01: El sistema debe permitir el inicio de sesión automático en Facebook 
+      utilizando credenciales (correo y contraseña) proporcionadas por el usuario.
+    - RF-02: El sistema debe operar en modo "Incógnito" para asegurar una sesión 
+      limpia y evitar conflictos con cookies preexistentes.
+    - RF-03: Las credenciales deben ser almacenadas localmente de forma persistente 
+      para facilitar su reutilización en futuras campañas.
+
+2.2. Configuración de Campañas
+    - RF-04: El usuario debe poder definir una lista de URLs de grupos de Facebook 
+      objetivo donde se realizará la difusión.
+    - RF-05: El sistema debe permitir redactar un mensaje personalizado para la 
+      publicación (copy).
+    - RF-06: El sistema debe permitir adjuntar un enlace (link) promocional a la 
+      publicación.
+
+2.3. Automatización de Publicaciones (Core)
+    - RF-07: El sistema debe navegar automáticamente a cada grupo listado de forma 
+      secuencial (uno por uno).
+    - RF-08: El sistema debe identificar inteligentemente el área de publicación 
+      ("¿Qué estás pensando?" o "Escribe algo...") independientemente de variaciones 
+      menores en la interfaz de Facebook.
+    - RF-09: El sistema debe simular la escritura humana (tecleo carácter por carácter) 
+      para evitar la detección de bots.
+    - RF-10: El sistema debe esperar la generación de la vista previa del enlace 
+      antes de confirmar la publicación.
+    - RF-11: Se deben implementar pausas aleatorias y configurables (ej. 60 segundos) 
+      entre cada publicación para simular comportamiento humano y evitar bloqueos por spam.
+
+2.4. Interfaz de Usuario y Monitoreo
+    - RF-12: El sistema debe contar con una interfaz gráfica web (Dashboard) amigable 
+      y moderna (Modo Oscuro) para la configuración y control.
+    - RF-13: El sistema debe mostrar una terminal de logs en tiempo real que informe 
+      al usuario sobre cada acción realizada (ej. "Login exitoso", "Publicado en grupo X", "Esperando...").
+    - RF-14: El sistema debe mostrar una barra de progreso visual indicando el porcentaje 
+      de avance de la campaña actual.
+    - RF-15: El usuario debe tener la capacidad de DETENER el proceso de automatización 
+      en cualquier momento mediante un botón de "Stop".
+
+3. ARQUITECTURA GENERAL DEL SISTEMA
+--------------------------------------------------------------------------------
+El sistema está diseñado bajo una arquitectura modular cliente-servidor local, 
+utilizando tecnologías web modernas para la interfaz y scripts de automatización 
+robustos para el backend.
+
+3.1. Diagrama de Componentes Lógicos
+
+    [ INTERFAZ DE USUARIO (Frontend) ]
+           |
+           |  (HTTP / WebSocket)
+           v
+    [ SERVIDOR DE APLICACIÓN (Backend - Flask) ] <---> [ ALMACENAMIENTO (JSON) ]
+           |
+           |  (Control de Ejecución)
+           v
+    [ MOTOR DE AUTOMATIZACIÓN (Selenium WebDriver) ]
+           |
+           |  (Interacción Web)
+           v
+    [ NAVEGADOR WEB (Google Chrome) ] ---> [ FACEBOOK ]
+
+3.2. Descripción de Módulos
+
+    A. Frontend (Capa de Presentación)
+       - Tecnologías: HTML5, CSS3, JavaScript.
+       - Responsabilidad: Proveer la interfaz visual para que los colaboradores de 
+         Marketing configuren las campañas.
+       - Comunicación: Utiliza Socket.IO para recibir actualizaciones de estado y 
+         logs en tiempo real sin recargar la página.
+
+    B. Backend (Capa de Control)
+       - Tecnologías: Python, Flask, Flask-SocketIO.
+       - Responsabilidad: Servir la aplicación web, gestionar las peticiones del 
+         usuario (Guardar configuración, Iniciar, Detener) y orquestar el hilo de 
+         ejecución del bot.
+
+    C. Motor de Automatización (Capa de Negocio)
+       - Tecnologías: Selenium WebDriver, ChromeDriverManager.
+       - Responsabilidad: Ejecutar la lógica de navegación. Interactúa directamente 
+         con el navegador Chrome para realizar las acciones de login, navegación y 
+         publicación como si fuera un usuario real.
+       - Características: Implementa esperas explícitas (WebDriverWait) y manejo 
+         de excepciones para robustez.
+
+    D. Persistencia de Datos
+       - Tecnologías: Archivos JSON (marketing_config.json).
+       - Responsabilidad: Almacenar la configuración de la última campaña (credenciales, 
+         grupos, mensajes) para persistencia entre sesiones.
+
+4. REQUERIMIENTOS TÉCNICOS DE INSTALACIÓN
+--------------------------------------------------------------------------------
+- Sistema Operativo: Windows 10/11.
+- Lenguaje: Python 3.8 o superior.
+- Navegador: Google Chrome (Última versión).
+- Dependencias (Python):
+    - flask
+    - flask-socketio
+    - selenium
+    - webdriver_manager
+    - eventlet
+ 
+ 5. DESARROLLO DE LA BASE DE DATOS
+ --------------------------------------------------------------------------------
+ En este punto se detalla el diseño lógico de datos del sistema AutoMarketing. 
+ Aunque la persistencia se realiza mediante archivos JSON, se define la estructura 
+ equivalente a tablas y relaciones para asegurar consistencia y trazabilidad.
+ 
+ Desarrollo de la base de datos de la tabla Usuarios
+ Esta tabla recopila la información de credenciales necesarias para la autenticación.
+ Campos: email (PK), password.
+ Se adjunta evidencia:
+  - Modelo lógico: [MODELO_DE_DATOS.txt](file:///i:/DICOTECH/AI/MODELO_DE_DATOS.txt)
+  - Diagrama ER: [modelo_datos_er.png](file:///i:/DICOTECH/AI/modelo_datos_er.png)
+ Código de desarrollo (persistencia JSON):
+ 
+     {
+       "email": "tu_correo@ejemplo.com",
+       "password": "tu_contraseña"
+     }
+ 
+ Referencia: [marketing_config.json](file:///i:/DICOTECH/AI/marketing_config.json)
+ 
+ Desarrollo de la base de datos de la tabla Campañas
+ Esta tabla contiene el contenido publicitario a difundir.
+ Campos: id (PK), usuario_email (FK), mensaje, link_promocion, imagen_path (opcional).
+ Se adjunta evidencia:
+  - Modelo lógico: [MODELO_DE_DATOS.txt](file:///i:/DICOTECH/AI/MODELO_DE_DATOS.txt)
+  - Diagrama ER: [modelo_datos_er.png](file:///i:/DICOTECH/AI/modelo_datos_er.png)
+ Código de desarrollo (estructura de campaña):
+ 
+     {
+       "mensaje": "Hola, les comparto nuestras nuevas promociones del mes. ¡Aprovechen!",
+       "link_to_promote": "https://mi-sitio-web.com/ofertas"
+     }
+ 
+ Referencia: [marketing_config.json](file:///i:/DICOTECH/AI/marketing_config.json)
+ 
+ Desarrollo de la base de datos de la tabla Grupos de Facebook
+ Catálogo de grupos objetivo donde se publica la campaña.
+ Campos: url (PK), nombre (opcional).
+ Se adjunta evidencia:
+  - Modelo lógico: [MODELO_DE_DATOS.txt](file:///i:/DICOTECH/AI/MODELO_DE_DATOS.txt)
+  - Diagrama ER: [modelo_datos_er.png](file:///i:/DICOTECH/AI/modelo_datos_er.png)
+ Código de desarrollo (lista de grupos):
+ 
+     {
+       "groups": [
+         "https://www.facebook.com/groups/ID_DEL_GRUPO_1",
+         "https://www.facebook.com/groups/ID_DEL_GRUPO_2"
+       ]
+     }
+ 
+ Referencia: [marketing_config.json](file:///i:/DICOTECH/AI/marketing_config.json)
+ 
+ Desarrollo de la base de datos de la tabla Publicaciones (Bitácora/Log)
+ Registro histórico de las acciones realizadas por el bot.
+ Campos: id (PK), campaña_id (FK), grupo_url (FK), fecha_hora, estado.
+ Se adjunta evidencia:
+  - Modelo lógico: [MODELO_DE_DATOS.txt](file:///i:/DICOTECH/AI/MODELO_DE_DATOS.txt)
+  - Diagrama ER: [modelo_datos_er.png](file:///i:/DICOTECH/AI/modelo_datos_er.png)
+ Código de desarrollo (ejemplo de evento):
+ 
+     {
+       "campaña_id": 1,
+       "grupo_url": "https://www.facebook.com/groups/ID_DEL_GRUPO_1",
+       "fecha_hora": "2026-01-26T12:34:56",
+       "estado": "Exitoso"
+     }
+ 
+ Evidencias adicionales:
+  - Generación del diagrama: [generar_diagrama_er.py](file:///i:/DICOTECH/AI/generar_diagrama_er.py)
+  - Lógica de automatización y publicación: [facebook_groups_automation.py](file:///i:/DICOTECH/AI/facebook_groups_automation.py), 
+    orquestado desde [app.py](file:///i:/DICOTECH/AI/app.py).

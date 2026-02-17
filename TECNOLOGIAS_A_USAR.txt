@@ -1,0 +1,15 @@
+Tecnologías a usar
+• 	 Python y Flask, para Back-End
+• 	 HTML, CSS y JavaScript, para Front-End
+• 	 Selenium WebDriver, para Automatización
+• 	 Flask-SocketIO, para Tiempo Real
+
+Back-End y Front-End son términos que se utilizan en el desarrollo de software y uso de la programación en la que:
+Back-End: El usuario no interactúa, no tiene contacto, solamente se procesan datos, se ejecuta la lógica del bot y se realizan peticiones.
+Front-End: El usuario interactúa normalmente, es dinámico y visible, también es conocida como interfaz de usuario (UI).
+
+Python: Es un lenguaje de programación interpretado y versátil, utilizado para desarrollar toda la lógica del lado del servidor y los scripts de automatización que controlan el navegador, asegurando la eficiencia en la ejecución de tareas repetitivas.
+Flask: Es un micro-framework escrito en Python que permite construir aplicaciones web de manera rápida y sencilla, sirviendo como el núcleo que conecta la interfaz gráfica con los scripts de automatización.
+HTML y CSS: Son herramientas de programación en el cual HTML se utiliza para estructurar el sitio web (Dashboard de control) y CSS tiene la finalidad de darles estilos para que el sitio Web sea atractivo, moderno (Dark Mode) y amigable para el usuario final.
+Selenium WebDriver: Es una herramienta de automatización dedicada que permite controlar navegadores web de forma programática, simulando fielmente la interacción humana (clics, escritura, navegación) necesaria para las tareas de marketing en Facebook.
+Flask-SocketIO: Es una tecnología que habilita la comunicación bidireccional en tiempo real entre el servidor y el cliente, permitiendo que el usuario visualice el progreso y los logs del bot en la interfaz instantáneamente sin recargar la página.

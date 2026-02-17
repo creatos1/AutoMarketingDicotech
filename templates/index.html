@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketing Automation Dashboard</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">
+          <i class="fa-solid fa-robot"></i>
+          <span>AutoMarketing</span>
+        </div>
+        <nav class="nav-menu">
+          <a href="#" class="active"
+            ><i class="fa-solid fa-gauge"></i> Dashboard</a
+          >
+          <a href="#"><i class="fa-solid fa-gear"></i> Configuración</a>
+          <a href="#"
+            ><i class="fa-solid fa-clock-rotate-left"></i> Historial</a
+          >
+        </nav>
+        <div class="status-indicator">
+          <span class="dot" id="connection-status"></span>
+          <span id="status-text">Desconectado</span>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <header class="top-bar">
+          <h1>Panel de Control</h1>
+          <div class="user-profile">
+            <i class="fa-solid fa-user-circle"></i>
+            <span>Admin</span>
+          </div>
+        </header>
+
+        <div class="dashboard-grid">
+          <!-- Configuration Panel -->
+          <div class="card config-card">
+            <div class="card-header">
+              <h2>
+                <i class="fa-solid fa-sliders"></i> Configuración de Campaña
+              </h2>
+            </div>
+            <div class="card-body">
+              <form id="configForm">
+                <div class="form-group">
+                  <label
+                    ><i class="fa-brands fa-facebook"></i> Email de
+                    Facebook</label
+                  >
+                  <input
+                    type="email"
+                    name="email"
+                    value="{{ config.get('email', '') }}"
+                    placeholder="usuario@ejemplo.com"
+                  />
+                </div>
+                <div class="form-group">
+                  <label><i class="fa-solid fa-key"></i> Contraseña</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value="{{ config.get('password', '') }}"
+                    placeholder="••••••••"
+                  />
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-users"></i> Grupos (Uno por
+                    línea)</label
+                  >
+                  <textarea
+                    name="groups"
+                    rows="5"
+                    placeholder="https://facebook.com/groups/..."
+                  >
+{{ config.get('groups', '') }}</textarea
+                  >
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-comment-dots"></i> Mensaje del
+                    Post</label
+                  >
+                  <textarea
+                    name="message"
+                    rows="4"
+                    placeholder="Escribe tu mensaje aquí..."
+                  >
+{{ config.get('message', '') }}</textarea
+                  >
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-pen"></i> Descripción para
+                    Facebook</label
+                  >
+                  <textarea
+                    name="facebook_description"
+                    rows="4"
+                    placeholder="Texto que acompañará la publicación en Facebook..."
+                  >
+{{ config.get('facebook_description', '') }}</textarea
+                  >
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-link"></i> Enlace a
+                    Promocionar</label
+                  >
+                  <input
+                    type="url"
+                    name="link_to_promote"
+                    value="{{ config.get('link_to_promote', '') }}"
+                    placeholder="https://mi-sitio.com"
+                  />
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-regular fa-image"></i> Imagen
+                    (opcional)</label
+                  >
+                  <input
+                    type="file"
+                    name="image_file"
+                    id="image_file"
+                    accept="image/*"
+                  />
+                  <input
+                    type="hidden"
+                    name="image_path"
+                    id="image_path"
+                    value="{{ config.get('image_path', '') }}"
+                  />
+                  <div class="helper-text" id="image_path_label">
+                    {{ config.get('image_path', '') }}
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-id-badge"></i> Clave de licencia
+                    (opcional)</label
+                  >
+                  <input
+                    type="text"
+                    name="license_key"
+                    value="{{ config.get('license_key', '') }}"
+                    placeholder="LIC-XXXX-XXXX"
+                  />
+                </div>
+                <div class="form-group">
+                  <label
+                    ><i class="fa-solid fa-shield-halved"></i> URL verificación
+                    licencia (opcional)</label
+                  >
+                  <input
+                    type="url"
+                    name="license_server_url"
+                    value="{{ config.get('license_server_url', '') }}"
+                    placeholder="https://tu-dominio.com/api/verify-license"
+                  />
+                </div>
+                <div class="action-buttons">
+                  <button
+                    type="button"
+                    class="btn btn-save"
+                    onclick="saveConfig()"
+                  >
+                    <i class="fa-solid fa-floppy-disk"></i> Guardar
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-start"
+                    onclick="startBot()"
+                    id="startBtn"
+                  >
+                    <i class="fa-solid fa-play"></i> Iniciar Bot
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-stop hidden"
+                    onclick="stopBot()"
+                    id="stopBtn"
+                  >
+                    <i class="fa-solid fa-stop"></i> Detener
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Live Logs & Status -->
+          <div class="right-column">
+            <!-- Progress Card -->
+            <div class="card progress-card">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-bars-progress"></i> Progreso</h2>
+                <span class="badge" id="progress-badge">Inactivo</span>
+              </div>
+              <div class="card-body">
+                <div class="progress-container">
+                  <div
+                    class="progress-bar"
+                    id="progressBar"
+                    style="width: 0%"
+                  ></div>
+                </div>
+                <div class="progress-stats">
+                  <span>Completado: <strong id="progressText">0%</strong></span>
+                  <span>Grupos: <strong id="groupsCount">0/0</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Terminal Card -->
+            <div class="card terminal-card">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-terminal"></i> Terminal en Vivo</h2>
+                <button class="btn-icon" onclick="clearLogs()" title="Limpiar">
+                  <i class="fa-solid fa-eraser"></i>
+                </button>
+              </div>
+              <div class="card-body terminal-body" id="logContainer">
+                <div class="log-entry system">
+                  Sistema iniciado. Esperando comandos...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      const socket = io();
+      const logContainer = document.getElementById("logContainer");
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const progressBar = document.getElementById("progressBar");
+      const progressText = document.getElementById("progressText");
+      const groupsCount = document.getElementById("groupsCount");
+      const progressBadge = document.getElementById("progress-badge");
+
+      socket.on("connect", () => {
+        document.getElementById("connection-status").classList.add("connected");
+        document.getElementById("status-text").textContent = "Conectado";
+        addLog("Conectado al servidor WebSocket", "system");
+      });
+
+      socket.on("disconnect", () => {
+        document
+          .getElementById("connection-status")
+          .classList.remove("connected");
+        document.getElementById("status-text").textContent = "Desconectado";
+        addLog("Desconectado del servidor", "error");
+      });
+
+      socket.on("log_message", (data) => {
+        addLog(data.data, data.level);
+      });
+
+      socket.on("progress_update", (data) => {
+        const percent = data.progress + "%";
+        progressBar.style.width = percent;
+        progressText.textContent = percent;
+        groupsCount.textContent = `${data.current}/${data.total}`;
+        progressBadge.textContent = "Ejecutando";
+        progressBadge.className = "badge running";
+      });
+
+      socket.on("status_update", (data) => {
+        if (data.status === "completed" || data.status === "error") {
+          toggleButtons(false);
+          progressBadge.textContent =
+            data.status === "completed" ? "Completado" : "Error";
+          progressBadge.className = `badge ${data.status}`;
+        }
+      });
+
+      function addLog(message, level) {
+        const div = document.createElement("div");
+        div.className = `log-entry ${level.toLowerCase()}`;
+        // Clean ANSI codes if any (basic regex)
+        message = message.replace(/\u001b\[[0-9;]*m/g, "");
+        div.textContent = message;
+        logContainer.appendChild(div);
+        logContainer.scrollTop = logContainer.scrollHeight;
+      }
+
+      function clearLogs() {
+        logContainer.innerHTML = "";
+      }
+
+      async function uploadImageIfNeeded() {
+        const fileInput = document.getElementById("image_file");
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0)
+          return null;
+
+        const fd = new FormData();
+        fd.append("image", fileInput.files[0]);
+
+        const response = await fetch("/upload_image", {
+          method: "POST",
+          body: fd,
+        });
+        const result = await response.json();
+        if (result.status !== "success") {
+          throw new Error(result.message || "Error subiendo imagen");
+        }
+        return result.image_path;
+      }
+
+      async function saveConfig() {
+        const form = document.getElementById("configForm");
+        const formData = new FormData(form);
+        const data = {};
+        for (const [key, value] of formData.entries()) {
+          if (key === "image_file") continue;
+          data[key] = value;
+        }
+
+        try {
+          const uploadedPath = await uploadImageIfNeeded();
+          if (uploadedPath) {
+            data.image_path = uploadedPath;
+            document.getElementById("image_path").value = uploadedPath;
+            document.getElementById("image_path_label").textContent =
+              uploadedPath;
+            const fileInput = document.getElementById("image_file");
+            if (fileInput) fileInput.value = "";
+          }
+          const response = await fetch("/save_config", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          const result = await response.json();
+          if (result.status === "success") {
+            addLog("Configuración guardada exitosamente", "info");
+          }
+        } catch (error) {
+          addLog(
+            `Error al guardar configuración: ${error.message || error}`,
+            "error",
+          );
+        }
+      }
+
+      async function startBot() {
+        // First save config
+        await saveConfig();
+
+        try {
+          const response = await fetch("/start_bot", { method: "POST" });
+          const result = await response.json();
+          if (result.status === "success") {
+            toggleButtons(true);
+            addLog("Iniciando bot...", "info");
+            progressBar.style.width = "0%";
+            progressBadge.textContent = "Iniciando";
+          } else {
+            addLog(result.message, "error");
+          }
+        } catch (error) {
+          addLog("Error al iniciar el bot", "error");
+        }
+      }
+
+      async function stopBot() {
+        try {
+          const response = await fetch("/stop_bot", { method: "POST" });
+          addLog("Solicitando detención...", "warning");
+          toggleButtons(false);
+          progressBadge.textContent = "Detenido";
+          progressBadge.className = "badge stopped";
+        } catch (error) {
+          addLog("Error al detener el bot", "error");
+        }
+      }
+
+      function toggleButtons(running) {
+        if (running) {
+          startBtn.classList.add("hidden");
+          stopBtn.classList.remove("hidden");
+        } else {
+          startBtn.classList.remove("hidden");
+          stopBtn.classList.add("hidden");
+        }
+      }
+    </script>
+  </body>
+</html>
